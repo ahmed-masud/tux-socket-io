@@ -1,0 +1,95 @@
+<script>
+  /* @polymerBehavior Tux.tuxSocketIo */
+  /* globals Tux, tux */
+  ('Tux' in window) ||(window.Tux = {});
+  ('sockets' in window.Tux)||(window.Tux.sockets = {});
+  Tux.SocketIOBehaviorImpl =  {
+    _name: "TuxSocketIO"
+  , properties: {
+      /**
+       * Specify socket.io url to connect to
+       */
+      url: {
+        type: String,
+        value: '/',
+        notify: true,
+        reflectToAttribute: true
+      }
+      /**
+       * name-space specifies which name-space the messages will
+       * be sent to. By default all messages are sent to the
+       * 'tux' namespace.
+       */
+    , nameSpace: {
+        type: String,
+        notify: true,
+        value: 'tux',
+        reflectToAttribute: true
+      }
+    , reconnection: {
+        type: Boolean,
+        value: true,
+        reflectToAttribute: true
+      }
+
+    , reconnectionDelay: {
+        type: Number,
+        value: 1000,
+        reflectToAttribute: true
+      }
+
+    , reconnectionDelayMax: {
+        type: Number,
+        value: 5000,
+        reflectToAttribute: true
+      }
+
+    , timeout: {
+        type: Number,
+        value: 20000,
+        reflectToAttribute: true
+      }
+
+    , multiplex: {
+        type: Boolean,
+        value: true,
+        reflectToAttribute: true
+      }
+    , _managerOpts: {
+        type: Object,
+        computed: '_updateManagerOpts(reconnection, reconnectionDelay, reconnectionDelayMax, timeout, multiplex)'
+      }
+    }
+  , created: function() {
+      var url = this.url;
+      this._socket =
+      Tux.sockets[url] = (url in Tux.sockets)?Tux.sockets[url]:window.io(this.url, this._managerOpts);
+  }
+  , _socket: null
+  , get socket() {
+    return this._socket;
+  }
+  , _managerOpts: function(reconnection, reconnectionDelay, reconnectionDelayMax, timeout, multiplex)
+    {
+      var args = {
+        'reconnection': reconnection,
+        'reconnectionDelay': reconnectionDelay,
+        'reconnectionDelayMax': reconnectionDelayMax,
+        'timeout': timeout,
+        'multiplex': multiplex
+      }
+      if(this._socket !== null) {
+        var io = this._socket.io; // io == Socket#Manager
+        io.reconnection(this.reconnection);
+        io.reconnectionDelay(this.reconnectionDelay);
+        io.reconnectionDelayMax(this.reconnectionDelayMax);
+        io.timeout(this.timeout);
+        io.multiplex(this.multiplex);
+      }
+      return args;
+    }
+  };
+
+  /* @polymerBehavior */
+  Tux.SocketIOBehavior = [ Tux.SocketIOBehaviorImpl ]
+</script>

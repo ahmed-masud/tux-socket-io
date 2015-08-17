@@ -1,0 +1,24 @@
+{
+  "name": "tux-socket-io",
+  "version": "1.0.0",
+  "authors": [
+    "Ahmed Masud <ahmed.masud@trustifier.com>"
+  ],
+  "description": "Socket-IO Polymer Element",
+  "main": "tux-socket-io.html",
+  "keywords": [
+    "webcomponents",
+    "webcomponent",
+    "Polymer 1.0",
+    "polymer",
+    "socket.io"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
