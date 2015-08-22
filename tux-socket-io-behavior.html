@@ -1,3 +1,4 @@
+<script src="lib/socket.io.js"></script>
 <script>
   /* @polymerBehavior Tux.tuxSocketIo */
   /* globals Tux, tux */
@@ -9,11 +10,10 @@
       /**
        * Specify socket.io url to connect to
        */
-      url: {
+      lastMessage: {
         type: String,
-        value: '/',
-        notify: true,
-        reflectToAttribute: true
+        readOnly: true,
+        notify: true
       }
       /**
        * name-space specifies which name-space the messages will
@@ -21,7 +21,7 @@
        * 'tux' namespace.
        */
     , nameSpace: {
-        type: String,
+        type: Array,
         notify: true,
         value: 'tux',
         reflectToAttribute: true
@@ -60,16 +60,20 @@
         computed: '_updateManagerOpts(reconnection, reconnectionDelay, reconnectionDelayMax, timeout, multiplex)'
       }
     }
-  , created: function() {
-      var url = this.url;
+  , ready: function() {
+      var namespace = this.nameSpace;
       this._socket =
-      Tux.sockets[url] = (url in Tux.sockets)?Tux.sockets[url]:window.io(this.url, this._managerOpts);
+      Tux.sockets[namespace] = (namespace in Tux.sockets)?Tux.sockets[namespace]:window.io('/' + namespace);
+      console.log('connecting on /' + namespace);
+      this._socket.on('connect', function() {
+        this.fire('socket-io-' + namespace + '-ready');
+      }.bind(this));
   }
   , _socket: null
   , get socket() {
     return this._socket;
   }
-  , _managerOpts: function(reconnection, reconnectionDelay, reconnectionDelayMax, timeout, multiplex)
+  , _updateManagerOpts: function(reconnection, reconnectionDelay, reconnectionDelayMax, timeout, multiplex)
     {
       var args = {
         'reconnection': reconnection,
@@ -91,5 +95,5 @@
   };
 
   /* @polymerBehavior */
-  Tux.SocketIOBehavior = [ Tux.SocketIOBehaviorImpl ]
+  Tux.SocketIOBehavior = Tux.SocketIOBehaviorImpl;
 </script>

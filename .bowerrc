@@ -1,0 +1,6 @@
+{
+	"scripts": {
+		"postinstall": "./tools/bower-postinstall.sh %",
+		"preuninstall": "./tools/bower-preuninstall.sh %"
+	}
+}
