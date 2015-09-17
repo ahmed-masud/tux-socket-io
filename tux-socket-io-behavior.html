@@ -21,7 +21,7 @@
        * 'tux' namespace.
        */
     , nameSpace: {
-        type: Array,
+        type: String,
         notify: true,
         value: 'tux',
         reflectToAttribute: true
@@ -63,14 +63,16 @@
   , ready: function() {
       var namespace = this.nameSpace;
       this._socket =
-      Tux.sockets[namespace] = (namespace in Tux.sockets)?Tux.sockets[namespace]:window.io('/' + namespace);
-      console.log('connecting on /' + namespace);
+      Tux.sockets[namespace] = (namespace in Tux.sockets)
+        ? Tux.sockets[namespace]
+        : window.io('/' + namespace);
+      console.info('tux-socket-io: connecting on /' + namespace);
       this._socket.on('connect', function() {
         this.fire('socket-io-' + namespace + '-ready');
       }.bind(this));
   }
   , _socket: null
-  , get socket() {
+  , socket : function() {
     return this._socket;
   }
   , _updateManagerOpts: function(reconnection, reconnectionDelay, reconnectionDelayMax, timeout, multiplex)
